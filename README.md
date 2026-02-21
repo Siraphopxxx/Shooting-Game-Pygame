@@ -23,4 +23,4 @@
 
 - R: เริ่มเกมใหม่ (Restart) / Q: ออกจากเกม (Quit) เมื่อจบเกม
 
-<img width="1803" height="949" alt="image" src="https://github.com/user-attachments/assets/b93c2106-3785-468c-8469-9fb3b118327a" />
+<img width="1803" height="947" alt="image" src="https://github.com/user-attachments/assets/65cfaa8f-26b8-442a-9817-d577d560144b" />
