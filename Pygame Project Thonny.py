@@ -142,7 +142,7 @@ class World():
         grass_img = pygame.image.load('img/grass.png')
         
         row_count = 0 #นับว่ารันไปกี่แถวแล้ว
-        for row in world_data: #ดึง แถว จากแมพ
+        for row in data: #ดึง แถว จากแมพ
             col_count = 0 #นับว่ารันไปปกี่คอมลัมแล้ว ในแถว
             for tile in row: #ดึง ทีละตัว ในแถวมา
 
@@ -203,7 +203,7 @@ class Soldier():
         self.health = 100 #กำหนดค่า HP
         self.max_health = self.health
         for i in range(6):
-            img_right = pygame.image.load(f'{i}.png')
+            img_right = pygame.image.load(f'img/jhon/Run/{i}.png')
             img_right = pygame.transform.scale(img_right,(40,60))
             img_left = pygame.transform.flip(img_right,True,False)
             self.img_right.append(img_right)
@@ -217,6 +217,7 @@ class Soldier():
         self.direction = 0
         self.width = self.img.get_width()
         self.height = self.img.get_height()
+        self.in_air = False
 
     def shoot(self):
         bullet = Bullet(self.rect.centerx, self.rect.centery, self.direction, bullet_image)
@@ -224,15 +225,15 @@ class Soldier():
         sound_channel = pygame.mixer.Channel(1)
         sound_channel.play(shoot_fx)
         # เพิ่มตรวจสอบการชนกับบอทเมื่อยิงกระสุน
-        for bot in bots:
-            if pygame.sprite.collide_rect(bullet, bot):
-                bot.decrease_health(10)  # ลดเลือดของบอท
+        # for bot in bots:
+        #     if pygame.sprite.collide_rect(bullet, bot):
+        #         bot.decrease_health(10)  # ลดเลือดของบอท
         # ตรวจสอบระยะทางระหว่าง Jhon กับบอท
-        for bot in bots:
-            distance_to_bot = abs(self.rect.x - bot.rect.x)
-            if distance_to_bot < 500:
-                bullet = Bullet(self.rect.centerx, self.rect.centery, self.direction, bullet_image)
-                bullets.append(bullet)
+        # for bot in bots:
+        #     distance_to_bot = abs(self.rect.x - bot.rect.x)
+        #     if distance_to_bot < 500:
+        #         bullet = Bullet(self.rect.centerx, self.rect.centery, self.direction, bullet_image)
+        #         bullets.append(bullet)
             
     # ฟังก์ชันในการลด health
     def decrease_health(self, amount):
@@ -254,11 +255,11 @@ class Soldier():
         
         if key[pygame.K_w] and not self.jump:
             jump_fx.play()
-            self.vel_y = -8
-            self.jump == True
+            self.vel_y = -11
+            self.jump = True
             
         if not key[pygame.K_w]:
-            self.jump == False
+            self.jump = False
 
         if key[pygame.K_a]:
             grass_fx.play()
@@ -276,12 +277,13 @@ class Soldier():
         self.vel_y += 1
         if self.vel_y > 10:
             self.vel_y = 10
+            
         dy += self.vel_y
 
         
         if self.jump == True:
-            self.vel_y = -11
-            self.jump = False
+            # self.vel_y = -8
+            # self.jump = False
             self.in_air = True
 
 
@@ -331,7 +333,7 @@ class Bot():
         self.index = 0
         self.counter = 0
         for i in range(6):
-            img_right = pygame.image.load(f'Run/{i}.png')
+            img_right = pygame.image.load(f'img/bot/Run/{i}.png')
             img_right = pygame.transform.scale(img_right, (40, 60))
             img_left = pygame.transform.flip(img_right, True, False)
             self.img_right.append(img_right)
@@ -377,15 +379,15 @@ class Bot():
         # ปรับส่วนนี้เพื่อให้บอทไม่ยิงกระสุนค้าง
         now = pygame.time.get_ticks()
         if now - self.last_shot_time > self.shoot_cooldown:
-            self.shoot()
+            # self.shoot()
             self.last_shot_time = now
 
 
-    def shoot(self):
-        # ปรับส่วนนี้เพื่อไม่ให้บอทยิงกระสุนค้าง
-        if self.rect.y == Jhon.rect.y and abs(self.rect.x - Jhon.rect.x) < 500:
-            bullet = Bullet(self.rect.centerx, self.rect.centery, self.direction, bullet_image)
-            self.bullets.append(bullet)
+    # def shoot(self):
+    #     # ปรับส่วนนี้เพื่อไม่ให้บอทยิงกระสุนค้าง
+    #     if self.rect.y == Jhon.rect.y and abs(self.rect.x - Jhon.rect.x) < 500:
+    #         bullet = Bullet(self.rect.centerx, self.rect.centery, self.direction, bullet_image)
+    #         self.bullets.append(bullet)
 
     def update_bullets(self):
         # ทำการอัปเดตและวาดกระสุนทั้งหมด
@@ -460,16 +462,20 @@ bots = [
     Bot(800, 189),
     Bot(800, 39),
 ]
+
 # ตั้งค่า shoot_cooldown สำหรับแต่ละบอท
-bots[0].shoot_cooldown = 20  # ให้บอทที่ 0 ยิงทุก 2 วินาที
-bots[1].shoot_cooldown = 20  # ให้บอทที่ 1 ยิงทุก 2 วินาที
-bots[2].shoot_cooldown = 20  # ให้บอทที่ 2 ยิงทุก 2 วินาที
-bots[3].shoot_cooldown = 20  # ให้บอทที่ 3 ยิงทุก 2 วินาที
-bots[4].shoot_cooldown = 20  # ให้บอทที่ 4 ยิงทุก 2 วินาที
+bots[0].shoot_cooldown = 300  # ให้บอทที่ 0 ยิงทุก 2 วินาที
+bots[1].shoot_cooldown = 300  # ให้บอทที่ 1 ยิงทุก 2 วินาที
+bots[2].shoot_cooldown = 300  # ให้บอทที่ 2 ยิงทุก 2 วินาที
+bots[3].shoot_cooldown = 300  # ให้บอทที่ 3 ยิงทุก 2 วินาที
+bots[4].shoot_cooldown = 300  # ให้บอทที่ 4 ยิงทุก 2 วินาที
+
+bot_health_bars = [BotHealthBar(10, 40, bot.health, bot.health) for bot in bots]
+
 
 Jhon = Soldier(100,100,5,20)
 health_bar = HealthBar(10, 10, Jhon.health, Jhon.health)
-bot_health_bars = [BotHealthBar(10, 40, bot.health, bot.health) for bot in bots]
+
 
 bullets = []  # เก็บกระสุนทั้งหมดในเกม
 
@@ -478,36 +484,38 @@ while run:
     clock.tick(FPS)
 
     screen.blit(bg_img,(0,0))
+    # draw_bg()
     World.draw_block()
-    draw_bg()
+
+    # # กำหนดค่าให้ index_of_bot ในลูป enumerate
+    # for index, bot in enumerate(bots):
+    #     bot_health_bars[index].draw(bot.health)  # โชว์เเถบเลือดของบอท
+    
+    Jhon.move()
+    Jhon.draw()
     health_bar.draw(Jhon.health)  #โชว์เเถบเลือด
 
-    
-    # กำหนดค่าให้ index_of_bot ในลูป enumerate
-    for index, bot in enumerate(bots):
-        bot_health_bars[index].draw(bot.health)  # โชว์เเถบเลือดของบอท
-    
-    Jhon.draw()
-    Jhon.move()
-    bot.move()  # เคลื่อนที่บอท
-    bot.draw()  # วาดบอท
+    # bot.move()  # เคลื่อนที่บอท
+    # bot.draw()  # วาดบอท
 
-    #อัพเดทเเละวาด Group
-    bullet_group.update()
-    bullet_group.draw(screen)
-    item_box_group.update()
-    item_box_group.draw(screen)
-    
     for index, bot in enumerate(bots):
         bot.move()
         bot.draw()
         bot.update_bullets()
         bot_health_bars[index].draw(bot.health)  # โชว์แถบเลือดของบอท
         # ตรวจสอบทิศทางและตำแหน่งของ Jhon
-        if bot.direction == 1 and Jhon.rect.x > bot.rect.x:
-            bot.shoot()
-        elif bot.direction == -1 and Jhon.rect.x < bot.rect.x:
-            bot.shoot()
+        # if bot.direction == 1 and Jhon.rect.x > bot.rect.x:
+        #     bot.shoot()
+        # elif bot.direction == -1 and Jhon.rect.x < bot.rect.x:
+        #     bot.shoot()
+
+    #อัพเดทเเละวาด Group
+    # bullet_group.update()
+    # bullet_group.draw(screen)
+    item_box_group.update()
+    item_box_group.draw(screen)
+    
+
         
     for bullet in bullets:
         bullet.update()
@@ -519,20 +527,20 @@ while run:
             if pygame.sprite.collide_rect(bullet, bot):
                 bot.decrease_health(10)
                 bullets.remove(bullet)
-    bullets = [bullet for bullet in bullets if not pygame.sprite.collide_rect(bullet, bot)]
+    # bullets = [bullet for bullet in bullets if not pygame.sprite.collide_rect(bullet, bot)]
                 
     # ตรวจสอบการชนของบอทกับ Jhon
     if pygame.sprite.collide_rect(Jhon, bot) and Jhon.rect.y == bot.rect.y:
         Jhon.decrease_health(10)   
 
-    for bot in bots:
-        for bullet in bot.bullets:
-            bullet.update()
-            screen.blit(bullet.image, bullet.rect)
+    # for bot in bots:
+    #     for bullet in bot.bullets:
+    #         bullet.update()
+    #         screen.blit(bullet.image, bullet.rect)
     
             
     for index, bot in enumerate(bots):
-        bot.shoot()
+        # bot.shoot()
         # ตรวจสอบ shoot_cooldown ของบอท
         now = pygame.time.get_ticks()
         if now - bot.last_shot_time > bot.shoot_cooldown:
@@ -542,34 +550,35 @@ while run:
             bot.bullets.append(bullet)
             
         
-    for bot_health_bar, bot in zip(bot_health_bars, bots):
-        bot_health_bar.draw(bot.health)
+    # for bot_health_bar, bot in zip(bot_health_bars, bots):
+    #     bot_health_bar.draw(bot.health)
         
     # ทำการยิงกระสุนของบอท
-    for bot in bots:
-        if bot.rect.y == Jhon.rect.y:
-            bot.shoot()
+    # for bot in bots:
+    #     if bot.rect.y == Jhon.rect.y:
+    #         bot.shoot()
+
     ##การเคลื่อนที่และวาดกระสุนของบอท
-    for bot in bots:
-        bot.draw()  # วาดบอท
-        for bullet in bot.bullets:
-            bullet.update()
-            screen.blit(bullet.image, bullet.rect)
+    # for bot in bots:
+    #     bot.draw()  # วาดบอท
+    #     for bullet in bot.bullets:
+    #         bullet.update()
+    #         screen.blit(bullet.image, bullet.rect)
 
     ##ตรวจสอบการชนของกระสุนบอทกับ Jhon       
-    for bot in bots:
-        bot.update_bullets()
-        for bullet in bot.bullets:
-            if pygame.sprite.collide_rect(bullet, Jhon):
-                Jhon.decrease_health(10)
-                bot.bullets.remove(bullet)
+    # for bot in bots:
+    #     bot.update_bullets()
+    #     for bullet in bot.bullets:
+    #         if pygame.sprite.collide_rect(bullet, Jhon):
+    #             Jhon.decrease_health(10)
+    #             bot.bullets.remove(bullet)
             
     for bot in bots:
         if bot.health <= 0:
             bots.remove(bot)
-        if bot.health == 0 and bot.rect.y == Jhon.rect.y:
-            new_bot = Bot(bot.rect.x, bot.rect.y)
-            bots.append(new_bot)
+        # if bot.health == 0 and bot.rect.y == Jhon.rect.y:
+        #     new_bot = Bot(bot.rect.x, bot.rect.y)
+        #     bots.append(new_bot)
         
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -608,9 +617,10 @@ while run:
                                 Bot(800, 189),
                                 Bot(800, 39),
                             ]
-                            bullets = []
-                            bot_health_bars = [BotHealthBar(10, 40, bot.health, bot.health) for bot in bots]
+                            # bullets = []
                             health_bar = HealthBar(10, 10, Jhon.health, Jhon.health)
+                            bot_health_bars = [BotHealthBar(10, 40, bot.health, bot.health) for bot in bots]
+
                             item_box_group.empty()
                             # เพิ่ม Item ใหม่
                             item_box = ItemBox('Health', 100, 500)
@@ -620,17 +630,17 @@ while run:
 
                             run = True  # เริ่มเกมใหม่
                             # เพิ่มกระสุนใหม่ใน Group ของกระสุน
-                            bullet_group.empty()
+                            # bullet_group.empty()
                             bullets = []
                             for bot in bots:
                                 bot.bullets = []  # รีเซ็ตกระสุนของบอท
                                 bullet = Bullet(bot.rect.centerx, bot.rect.centery, bot.direction, bullet_image)
                                 bot.bullets.append(bullet)
                                 bullet_group.add(bullet)
-                            # รีเซ็ต shoot_cooldown และสร้างกระสุนใหม่สำหรับทุกบอท
+                            #รีเซ็ต shoot_cooldown และสร้างกระสุนใหม่สำหรับทุกบอท
                             for bot in bots:
-                                bot.shoot_cooldown = 100
-                                bot.bullets = []
+                                bot.shoot_cooldown = 500
+                                #bot.bullets = []
                         elif event.key == pygame.K_q:
                             run = False
                             waiting_for_input = False
